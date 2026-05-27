@@ -1,0 +1,117 @@
+from flask import Flask, render_template_string, request
+
+app = Flask(__name__)
+
+# --- BLOQUE DE DISEÑO HTML ---
+PAGINA_HTML = """
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mantenimiento y Limpieza</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
+        header { background-color: #0056b3; color: white; padding: 15px; text-align: center; }
+        nav ul { list-style: none; padding: 0; }
+        nav ul li { display: inline; margin: 0 10px; }
+        nav ul li a { color: white; text-decoration: none; font-weight: bold; }
+        
+        .contenedor-tarjetas { display: flex; gap: 20px; margin-top: 20px; }
+        .tarjeta { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; }
+        
+        .galeria { display: flex; gap: 15px; margin-top: 20px; justify-content: space-between; }
+        .galeria img { width: 32%; height: 200px; border-radius: 8px; object-fit: cover; }
+        
+        /* Contacto Simple */
+        .contacto-simple { margin-top: 30px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .info-contacto { display: flex; gap: 30px; margin-bottom: 20px; font-size: 1.1rem; }
+        .info-contacto i { color: #0056b3; margin-right: 8px; }
+        
+        form label { font-weight: bold; display: block; margin-top: 10px; }
+        form input[type="text"], form textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        form input[type="submit"] { background-color: #0056b3; color: white; border: none; padding: 10px; margin-top: 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 1rem; }
+        .alerta { background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Servicios de Mantenimiento Técnico</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="contenedor-tarjetas">
+            <article class="tarjeta">
+                <h2>Limpieza de celular</h2>
+                <p>Mantenimiento integral interno y externo para smartphones. Eliminamos residuos de polvo en puertos de carga, altavoces y ranuras.</p>
+            </article>
+            <article class="tarjeta">
+                <h2>Limpieza de computadoras</h2>
+                <p>Limpieza profunda de componentes para equipos de escritorio. Incluye remoción de polvo en fuentes de poder, ventiladores y placas madre.</p>
+            </article>
+            <article class="tarjeta">
+                <h2>Limpieza de PC</h2>
+                <p>Mantenimiento preventivo y correctivo para laptops y computadoras personales. Limpieza meticulosa de teclados y pantallas.</p>
+            </article>
+        </section>
+        
+        <section class="galeria">
+            <img src="https://forjandoelfuturo.com.ar/wp-content/uploads/2021/12/celulares-768x512.jpg" alt="Limpieza de celular">
+            <img src="https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=1000" alt="Limpieza de computadoras">
+            <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=1000" alt="Limpieza de PC">
+        </section>
+        
+        <section class="contacto-simple">
+            <h2>Contáctanos</h2>
+            
+            <div class="info-contacto">
+                <div><i class="fa-solid fa-phone"></i> <strong>Teléfono:</strong> +51 987 654 321</div>
+                <div><i class="fa-solid fa-envelope"></i> <strong>Correo:</strong> soporte@misitioweb.com</div>
+                <div><i class="fa-solid fa-location-dot"></i> <strong>Ubicación:</strong> San Juan de Lurigancho</div>
+            </div>
+            
+            <form action="" method="POST">
+                {% if mensaje_confirmacion %}
+                    <div class="alerta">
+                        {{ mensaje_confirmacion }}
+                    </div>
+                {% endif %}
+                
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+                
+                <label for="mensaje">Mensaje:</label>
+                <textarea id="mensaje" name="mensaje" rows="3" required></textarea>
+                
+                <input type="submit" value="Enviar Mensaje">
+            </form>
+        </section>
+    </main>
+    <footer>
+        <br>
+        <p>&copy; 2026 Mi sitio web. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
+"""
+
+# --- LÓGICA DE PYTHON / FLASK ---
+@app.route("/", methods=["GET", "POST"])
+def inicio():
+    mensaje = None
+    if request.method == "POST":
+        nombre_usuario = request.form["nombre"]
+        mensaje = f"¡Gracias {nombre_usuario}! Hemos recibido tu mensaje."
+    return render_template_string(PAGINA_HTML, mensaje_confirmacion=mensaje)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
